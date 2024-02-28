@@ -1,0 +1,10 @@
+<script src="../packages/reactivity/dist/reactivity.global.js"></script>
+<script>
+  // 打包 packages/reactivity 包
+
+  let { reactive, readonly, shallowReadonly, shallowReactive }  = VueReactivity
+
+  let state = readonly({ name: 'richard', age: { year: '95' } })
+
+  console.log(state.age = 2)
+</script>

@@ -1,14 +1,7 @@
-import { shared } from '@vue/shared'
-
-/**
- * Error
- * Cannot find module '@vue/shared'. Did you mean to set the 'moduleResolution' option to 'node', or to add aliases to the 'paths' option? ts(2792)
- */
-
-const reactivity = {
-
-}
-
+// 导出方法，不实现具体功能
 export {
-  reactivity
-}
+  reactive,
+  shallowReactive,
+  readonly,
+  shallowReadonly
+} from './reactive'
