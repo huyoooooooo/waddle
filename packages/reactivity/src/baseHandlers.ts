@@ -1,5 +1,7 @@
 import { isObject } from "@vue/shared"
 import { reactive, readonly } from "./reactive"
+import { track } from "./effect"
+import { TrackOpTypes } from "./operaters"
 
 const get = createGetter()
 const shallowGet = createGetter(false, true)
@@ -15,6 +17,7 @@ function createGetter(isReadonly = false, isShallow = false) {  // 拦截获取
 
     if(!isReadonly) {
       // 收集依赖
+      track(target, TrackOpTypes.GET, key)
     }
 
     if(isShallow) {
