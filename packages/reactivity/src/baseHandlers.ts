@@ -1,7 +1,7 @@
-import { isObject } from "@vue/shared"
+import { hasChanged, hasOwn, isArray, isIntegerKey, isObject } from "@vue/shared"
 import { reactive, readonly } from "./reactive"
-import { track } from "./effect"
-import { TrackOpTypes } from "./operaters"
+import { track, trigger } from "./effect"
+import { TrackOpTypes, TriggerOpTypes } from "./operaters"
 
 const get = createGetter()
 const shallowGet = createGetter(false, true)
@@ -34,8 +34,20 @@ function createGetter(isReadonly = false, isShallow = false) {  // 拦截获取
 }
 
 function createSetter(isShallow = false) {  // 拦截设置
-  return function set(target, key, receiver) {
-    const res = Reflect.set(target, key, receiver)  // Reflect 修改值具有返回值(是否修改成功, 布尔值)
+  return function set(target, key, value, receiver): boolean {
+    let oldValue = target[key]
+
+    // 区分新增、修改   vue2 无法监控监控长度变化
+    const hasKey = isArray(target) && isIntegerKey(key) ? key < target.length: hasOwn(target, key)
+    const res = Reflect.set(target, key, value, receiver)  // Reflect 修改值具有返回值(是否修改成功, 布尔值)
+    
+    if (!hasKey) {
+      // 新增
+      trigger(target, TriggerOpTypes.ADD, key, value)
+    } else if(hasChanged(oldValue, value)){
+      // 修改
+      trigger(target, TriggerOpTypes.SET, key, value, oldValue)
+    }
 
     return res
   }
