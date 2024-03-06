@@ -1,0 +1,22 @@
+<div id="app"></div>
+<script src="../packages//reactivity/dist/reactivity.global.js"></script>
+
+<script>
+  const { ref, reactive, effect, toRef, toRefs } = VueReactivity
+
+  // const state = ref('江苏省')
+  // const state = ref({ province: '江苏省' })         // proxy 代理对象直接解构后不会依赖收集
+
+  const state = reactive({ province: '江苏省' })
+  const province = toRef(state, 'province')    // 通过对对象的属性进行代理
+  // const { province } = toRefs(state)
+
+  effect(() => {
+    app.innerHTML = province.value
+  })
+
+  setTimeout(() => {
+    // state.value.province = '浙江省'
+    state.province = '浙江省'
+  }, 1000)
+</script>
